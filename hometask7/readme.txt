@@ -15,7 +15,9 @@ ssh-copy-id -i /home/st/.ssh/id_rsa.pub -p 4822 root@yoko.ukrtux.com
 ssh -p 4822 root@yoko.ukrtux.com
 
 
-python3 -m http.server 1337
+python3 -m http.server [port]
 
-#not working
-ssh -R 14822:localhost:1337 -p 4822 root@yoko.ukrtux.com
+
+ssh -R 14822:localhost:[port] -p 4822 root@yoko.ukrtux.com
+
+http://yoko.ukrtux.com:14822/

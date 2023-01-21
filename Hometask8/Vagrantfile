@@ -1,0 +1,38 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+
+Vagrant.configure("2") do |config|
+
+
+  config.vm.define "centos" do |centos|
+  ubuntu.vm.box = "centos/7" 
+
+        centos.vm.network "forwarded_port", guest: 80, host: 8888 	
+	centos.vm.network "forwarded_port", guest: 443, host: 8443
+
+	centos.vm.synced_folder ".", "/vagrant"    	
+end
+
+   config.vm.provision "shell", inline: <<-SHELL
+
+	setenforce 0
+	sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+        apt-get install -y apache2
+
+	mkdir /etc/www-content/
+
+	cp /vagrant/www-content/index.html /etc/www-content/
+	cp /vagrant/ssl.conf /etc/httpd/conf.d/
+        yum install -y epel-release
+        yum install -y httpd
+
+	yum –y install mod_ssl
+	
+	mkdir /etc/ssl/privatekey
+	chmod 700 /etc/ssl/privatekey
+	openssl req -x509 -new -newkey rsa:2048  -nodes -days 365 -keyout /etc/ssl/privatekey/domain.key -out /etc/ssl/certs/domain.csr
+
+   SHELL
+end
